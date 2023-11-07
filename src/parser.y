@@ -29,7 +29,7 @@
 %token IF ELSE
 %token INT VOID FLOAT CHAR 
 %token LPAREN RPAREN LBRACE RBRACE SEMICOLON
-%token ADD SUB OR AND LESS ASSIGN
+%token ADD SUB ASSIGN
 %token RETURN
 %token ALIGNAS ALIGNOF AUTO BOOL BREAK CASE CATCH CHAR8_T CHAR16_T
 %token CHAR32_T CLASS CONST CONSTEXPR CONST_CAST CONTINUE DECLTYPE DEFAULT
@@ -41,7 +41,7 @@
 %token UNION UNSIGNED USING VIRTUAL VOLATILE
 
 %token WHILE MUL DIV MOD
-%token EQ NEQ LE GT GE
+%token EQ LT NEQ LE GT GE NE
 %token PLUSASSIGN MINUSASSIGN MULTASSIGN DIVASSIGN MODASSIGN ANDASSIGN
 %token ORASSIGN XORASSIGN LSHIFTASSIGN RSHIFTASSIGN INCREMENT DECREMENT
 %token BITAND BITOR BITXOR BITNOT MODULO LSHIFT RSHIFT LOGAND LOGOR NOT
@@ -155,35 +155,102 @@ AddExp
         SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
         $$ = new BinaryExpr(se, BinaryExpr::SUB, $1, $3);
     }
+    |
+    AddExp MUL PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::MUL, $1, $3);
+    }
+    |
+    AddExp DIV PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::DIV, $1, $3);
+    }
+    |
+    AddExp BITAND PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::BITAND, $1, $3);
+    }
+    |
+    AddExp BITOR PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::BITOR, $1, $3);
+    }
+    |
+    AddExp BITXOR PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::BITXOR, $1, $3);
+    }
+    |
+    AddExp MOD PrimaryExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::MOD, $1, $3);
+    }
     ;
 RelExp
     :
     AddExp {$$ = $1;}
     |
-    RelExp LESS AddExp
+    RelExp LT AddExp
     {
         SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
-        $$ = new BinaryExpr(se, BinaryExpr::LESS, $1, $3);
+        $$ = new BinaryExpr(se, BinaryExpr::LT, $1, $3);
     }
+    |
+    RelExp GT AddExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::GT, $1, $3);
+    }
+    |
+    RelExp EQ AddExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::EQ, $1, $3);
+    }
+    |
+    RelExp GE AddExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::GE, $1, $3);
+    }
+    |
+    RelExp LE AddExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::LE, $1, $3);
+    }
+    |
+    RelExp NE AddExp
+    {
+        SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
+        $$ = new BinaryExpr(se, BinaryExpr::NE, $1, $3);
+    }
+
     ;
 LAndExp
     :
     RelExp {$$ = $1;}
     |
-    LAndExp AND RelExp
+    LAndExp LOGAND RelExp
     {
         SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
-        $$ = new BinaryExpr(se, BinaryExpr::AND, $1, $3);
+        $$ = new BinaryExpr(se, BinaryExpr::LOGAND, $1, $3);
     }
     ;
 LOrExp
     :
     LAndExp {$$ = $1;}
     |
-    LOrExp OR LAndExp
+    LOrExp LOGOR LAndExp
     {
         SymbolEntry *se = new TemporarySymbolEntry(TypeSystem::intType, SymbolTable::getLabel());
-        $$ = new BinaryExpr(se, BinaryExpr::OR, $1, $3);
+        $$ = new BinaryExpr(se, BinaryExpr::LOGOR, $1, $3);
     }
     ;
 Type

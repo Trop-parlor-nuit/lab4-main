@@ -30,7 +30,7 @@ private:
     int op;
     ExprNode *expr1, *expr2;
 public:
-    enum {ADD, SUB, MUL, DIV, MOD, AND, OR, LESS, EQ, GT, LT, GE, LE, NE, NOT};
+    enum {ADD, SUB, MUL, DIV, MOD, LOGAND, LOGOR,BITAND,BITOR,BITXOR, LESS, EQ, GT, LT, GE, LE, NE, NOT};
     BinaryExpr(SymbolEntry *se, int op, ExprNode*expr1, ExprNode*expr2) : ExprNode(se), op(op), expr1(expr1), expr2(expr2){};
     void output(int level);
 };
@@ -42,7 +42,7 @@ private:
     int op;  // using the same enum as BinaryExpr
     ExprNode *expr;
 public:
-    enum {ADD, SUB, MUL, DIV, MOD, AND, OR, LESS, EQ, GT, LT, GE, LE, NE, NOT};
+    enum {ADD, SUB, MUL, DIV, MOD, AND,  LESS, EQ, GT, LT, GE, LE, NE, NOT};
     UnaryExpr(SymbolEntry *se, int op, ExprNode *expr) : ExprNode(se), op(op), expr(expr) {};
     void output(int level) ;
 };
@@ -163,6 +163,8 @@ public:
     void setRoot(Node*n) {root = n;}
     void output();
 };
+
+
 
 
 class IoStmt : public StmtNode

@@ -20,10 +20,10 @@
         va_end(args);
     }
 
-    /* Your code here, if desired (lab3). */
+
 %}
 
-/* definitions section */
+
 FLONUM   [0-9]*\.[0-9]+([eE][-+]?[0-9]+)?|[0-9]+[eE][-+]?[0-9]+|0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+([pP][-+]?[0-9]+)?
 
 DECIMIAL ([1-9][0-9]*|0)
@@ -31,7 +31,7 @@ OCT     0[0-7]+
 HEX     0[xX][0-9a-fA-F]+
 
 
-/*  Your code here (lab3). */
+
 
 
 IF      if
@@ -116,11 +116,13 @@ WHITE [\t ]
 
 
 EQ      ==
-NEQ     !=
-LESS      <
+NE      !=
+LT      <
 LE      <=
 GT      >
 GE      >=
+
+
 
 ASSIGN           "="
 PLUSASSIGN       "+="
@@ -135,12 +137,14 @@ LSHIFTASSIGN     "<<="
 RSHIFTASSIGN     ">>="
 INCREMENT        "++"
 DECREMENT        "--"
+
 BITAND           "&"
 BITOR            "|"
 BITXOR           "^"
 BITNOT           "~"
 LSHIFT           "<<"
 RSHIFT           ">>"
+
 LOGAND           "&&"
 LOGOR            "||"
 NOT              "!"
@@ -629,18 +633,18 @@ NOT              "!"
     return NOT;
 }
 
-{LESS} {
-    dump_tokens("LESS\t%s\n", yytext);
-    return LESS;
+{LT} {
+    dump_tokens("LT\t%s\n", yytext);
+    return LT;
 }
 {EQ} {
     dump_tokens("EQ\t%s\n", yytext);
     return EQ;
 }
 
-{NEQ} {
-    dump_tokens("NEQ\t%s\n", yytext);
-    return NEQ;
+{NE} {
+    dump_tokens("NE\t%s\n", yytext);
+    return NE;
 }
 
 {LE} {

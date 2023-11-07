@@ -22,23 +22,65 @@ void BinaryExpr::output(int level)
 {
     std::string op_str;
     switch(op)
-    {
-        case ADD:
-            op_str = "add";
-            break;
-        case SUB:
-            op_str = "sub";
-            break;
-        case AND:
-            op_str = "and";
-            break;
-        case OR:
-            op_str = "or";
-            break;
-        case LESS:
-            op_str = "less";
-            break;
-    }
+{
+    case ADD: // +
+        op_str = "add";
+        break;
+    case SUB: // -
+        op_str = "sub";
+        break;
+    case MUL: // *
+        op_str = "mul";
+        break;
+    case DIV: // /
+        op_str = "div";
+        break;
+    case MOD: // %
+        op_str = "mod";
+        break;
+    case LOGAND: // &&
+        op_str = "logand";
+        break;
+    case LOGOR: // ||
+        op_str = "logor";
+        break;
+    case NOT: // !
+        op_str = "not";
+        break;
+    
+
+    case EQ: // ==
+        op_str = "equal";
+        break;
+    case GT: // >
+        op_str = "greater";
+        break;
+    case LT: // <
+        op_str = "less";
+        break;
+    case GE: // >=
+        op_str = "greater_equal";
+        break;
+    case LE: // <=
+        op_str = "less_equal";
+        break;
+    case NE: // !=
+        op_str = "not_equal";
+        break;
+    case BITAND : 
+        op_str = "bit_and";
+        break;
+    case BITOR  : 
+        op_str = "bit_or";
+        break;
+    case BITXOR   :
+        op_str = "bit_xor";
+        break;
+    default:
+        // 处理默认情况或者错误
+        break;
+}
+
     fprintf(yyout, "%*cBinaryExpr\top: %s\n", level, ' ', op_str.c_str());
     expr1->output(level + 4);
     expr2->output(level + 4);
