@@ -9,6 +9,6 @@ int main() {
     else {
         a = 0 + + b;
     }
-    putint(a);
+    
     return 0;
 }

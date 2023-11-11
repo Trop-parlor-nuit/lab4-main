@@ -8,6 +8,8 @@
     #include <stdlib.h>
     #include "common.h"
     #include "parser.h"
+    #include "SymbolTable.h"
+
 }
 %{
     extern dump_type_t dump_type;
@@ -24,7 +26,7 @@
 %}
 
 
-FLONUM   [0-9]*\.[0-9]+([eE][-+]?[0-9]+)?|[0-9]+[eE][-+]?[0-9]+|0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+([pP][-+]?[0-9]+)?
+FLO   [0-9]*\.[0-9]+([eE][-+]?[0-9]+)?|[0-9]+[eE][-+]?[0-9]+|0[xX][0-9a-fA-F]*\.[0-9a-fA-F]+([pP][-+]?[0-9]+)?
 
 DECIMIAL ([1-9][0-9]*|0)
 OCT     0[0-7]+
@@ -149,11 +151,31 @@ LOGAND           "&&"
 LOGOR            "||"
 NOT              "!"
 
+GETINT          getint
+GETCH           getch
+GETFLOAT        getfloat 
+GETARRAY        getarray 
+PUTINT          putint      
+PUTCH           putch
+PUTFLOAT        putfloat 
+PUTARRAY        putarray 
+
+onelinecommentbegin "//"
+onelinecommentelement "."
+onelinecommentend "\n"
+%x ONELINECOMMENT
+commentbegin "/*"
+commentelement .|\n
+commentend "*/"
+%x COMMENT
 
 
 %%
     /* rules section */
-
+{onelinecommentbegin}.*\n { BEGIN(INITIAL); }
+{commentbegin} {BEGIN COMMENT;}
+<COMMENT>{commentelement} {}
+<COMMENT>{commentend} {BEGIN INITIAL;}
 
 
 
@@ -692,6 +714,10 @@ NOT              "!"
     dump_tokens("SEMICOLON\t%s\n", yytext);
     return SEMICOLON;
 }
+"," {
+    dump_tokens("COMMA\t%s\n", yytext);
+    return COMMA;
+}
 
 "(" {
     dump_tokens("LPAREN\t%s\n", yytext);
@@ -712,7 +738,14 @@ NOT              "!"
     dump_tokens("RBRACE\t%s\n", yytext);
     return RBRACE;
 }
-
+"["     { 
+    dump_tokens("LBRACKET\t%s\n", yytext);
+    return LBRACKET;
+}
+"]"     { 
+    dump_tokens("RBRACKET\t%s\n", yytext);
+    return RBRACKET;
+}  
 {DECIMIAL} {
     int decimal;
     decimal = atoi(yytext);
@@ -720,16 +753,51 @@ NOT              "!"
     yylval.itype = decimal;
     return INTEGER;
 }
+{HEX} {
+    int hexal = strtol(yytext, NULL, 16);
+    dump_tokens("HEXAL\t%s\t%f\n", yytext, hexal);
+    yylval.itype = hexal;
+    return INTEGER;
+}
+{OCT} {
+    int octal = strtol(yytext, NULL, 8);
+    dump_tokens("OCTAL\t%s\t%f\n", yytext, octal);
+    yylval.itype = octal;
+    return INTEGER;
+}
 
-
+{FLO} {
+    float value = atof(yytext);
+    dump_tokens("FLO\t%s\t%f\n", yytext, value);
+    yylval.ftype = value;
+    return FLO;
+}
 {ID} {
     char *lexeme;
     dump_tokens("ID\t%s\n", yytext);
     lexeme = new char[strlen(yytext) + 1];
     strcpy(lexeme, yytext);
     yylval.strtype = lexeme;
+    if(strcmp(yytext, "getint") == 0||
+        strcmp(yytext,"getch")==0||
+        strcmp(yytext,"getfloat")==0||
+        strcmp(yytext,"getarray")==0||
+        strcmp(yytext, "putch") == 0||
+        strcmp(yytext, "putint") == 0||
+        strcmp(yytext, "putfloat") == 0||
+        strcmp(yytext, "putarray") == 0)
+    {
+        Type *funcType;
+        funcType = new FunctionType(TypeSystem::intType,{});
+        SymbolEntry *se = new IdentifierSymbolEntry(funcType, yytext, 0);
+        //
+        SymbolTable* globalTable=globals;    //全域符号表
+        //for(globalTable = identifiers; globalTable->getPrev(); globalTable = globalTable->getPrev()); //全域符号表
+        globalTable->install(yytext, se);
+    }
     return ID;
 }
+
 
 
 

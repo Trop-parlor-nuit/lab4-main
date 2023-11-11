@@ -1,0 +1,4 @@
+//test local var define
+int main(){
+    int a,b,c;
+}

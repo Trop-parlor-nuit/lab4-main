@@ -13,15 +13,19 @@ private:
 protected:
     enum {CONSTANT, VARIABLE, TEMPORARY};
     Type *type;
+    bool is_const=0;
 
 public:
     SymbolEntry(Type *type, int kind);
+    SymbolEntry(Type *type, int kind, bool is_const);
     virtual ~SymbolEntry() {};
     bool isConstant() const {return kind == CONSTANT;};
     bool isTemporary() const {return kind == TEMPORARY;};
     bool isVariable() const {return kind == VARIABLE;};
+    bool is_a_const() const {return is_const;};
     Type* getType() {return type;};
     virtual std::string toStr() = 0;
+    virtual std::string toStrf() = 0;
     // You can add any function you need here.
 };
 
@@ -45,6 +49,7 @@ public:
     int getintValue() const {return ivalue;};
     float getfloatValue() const {return fvalue;};
     std::string toStr();
+    std::string toStrf();
     // You can add any function you need here.
 };
 
@@ -81,13 +86,31 @@ private:
 
 public:
     IdentifierSymbolEntry(Type *type, std::string name, int scope);
+    IdentifierSymbolEntry(Type *type, std::string name, int scope, bool is_const);
     virtual ~IdentifierSymbolEntry() {};
     std::string toStr();
+    std::string toStrf();
     int getScope() const {return scope;};
     // You can add any function you need here.
 };
 
+class ConstIdentifierSymbolEntry : public SymbolEntry
+{
+private:
+    enum {GLOBAL, PARAM, LOCAL};
+    std::string name;
+    int scope;
+    // You can add any field you need here.
 
+public:
+    ConstIdentifierSymbolEntry(Type *type, std::string name, int scope);
+    ConstIdentifierSymbolEntry(Type *type, std::string name, int scope, bool is_const);
+    virtual ~ConstIdentifierSymbolEntry() {};
+    std::string toStr();
+    std::string toStrf();
+    int getScope() const {return scope;};
+    // You can add any function you need here.
+};
 /* 
     Symbol entry for temporary variable created by compiler. Example:
 
@@ -114,6 +137,7 @@ public:
     TemporarySymbolEntry(Type *type, int label);
     virtual ~TemporarySymbolEntry() {};
     std::string toStr();
+    std::string toStrf();
     // You can add any function you need here.
 };
 
@@ -136,6 +160,7 @@ public:
 };
 
 extern SymbolTable *identifiers;
+extern SymbolTable *constidentifiers;
 extern SymbolTable *globals;
 
 #endif

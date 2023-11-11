@@ -69,6 +69,7 @@ private:
 public:
     FunctionType(Type* returnType, std::vector<Type*> paramsType) : 
     Type(Type::FUNC), returnType(returnType), paramsType(paramsType){};
+    void SetParamsType(std::vector<Type*>);
     std::string toStr();
 };
 
